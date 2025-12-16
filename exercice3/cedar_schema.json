@@ -1,0 +1,54 @@
+{
+    "SurveyApp": {
+      "entityTypes": {
+        "Technician": {
+          "shape": {
+            "type": "Record",
+             "attributes": {
+                "primaryCompany": {"type": "String"}
+            }
+          }
+        },
+        "Manager": {
+          "shape": {
+            "type": "Record",
+            "attributes": {}
+          }
+        },
+        "Guest": {
+          "shape": {
+            "type": "Record",
+            "attributes": {}
+          }
+        },
+        "Survey": {
+          "shape": {
+            "type": "Record",
+            "attributes": {
+              "primaryCompany": {"type": "String"}
+            }
+          }
+        },
+        "Exception": {
+          "shape": {
+            "type": "Record",
+            "attributes": {}
+          }
+        },
+        "Asset": {
+          "shape": {
+            "type": "Record",
+            "attributes": {
+              "assetType": {"type": "String"}
+            }
+          }
+        }
+      },
+      "actions": {
+        "ReadSurvey": {},
+        "WriteSurvey": {},
+        "ApproveException": {},
+        "ReadAsset": {}
+      }
+    }
+}

@@ -1,0 +1,256 @@
+# Scalar types
+scalar DateTime
+
+# Enums
+enum AssetLevel {
+  LEVEL1
+  LEVEL2
+  LEVEL3
+  LEVEL4
+}
+
+enum ExceptionStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+# Core types
+type Asset {
+  id: ID!
+  name: String!
+  description: String
+  level: AssetLevel!
+  parentId: ID
+  parent: Asset
+  children: [Asset!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Survey {
+  id: ID!
+  name: String!
+  description: String
+  assetId: ID
+  interval: Int
+  createdAt: DateTime!
+  updatedAt: DateTime!
+
+}
+
+type Reading {
+  id: ID!
+  asset: Asset!
+  survey: Survey!
+  value: double!
+  recordedAt: DateTime!
+}
+
+type Exception {
+  id: ID!
+  asset: Asset!
+  survey: Survey!
+  reason: String!
+  status: ExceptionStatus
+  createdAt: DateTime!
+  updatedAt: DateTime!
+
+}
+
+type Remediation {
+  id: ID!
+  exception: Exception!
+  action: String!
+  completedAt: DateTime
+}
+
+# Input types for filtering
+input AssetFilter {
+  level: AssetLevel
+  parentId: ID
+  name: String
+}
+
+input SurveyFilter {
+  assetId: ID
+  name: String
+}
+
+input ReadingFilter {
+  assetId: ID
+  surveyId: ID
+  value: double
+  dateFrom: DateTime
+  dateTo: DateTime
+}
+
+input ExceptionFilter {
+  assetId: ID
+  surveyId: ID
+  status: ExceptionStatus
+  dateFrom: DateTime
+  dateTo: DateTime
+}
+
+input RemediationFilter {
+  exceptionId: ID
+  action: String
+  completed: Boolean
+}
+
+# Pagination input
+input PaginationInput {
+  first: Int = 10
+  after: String
+  last: Int
+  before: String
+}
+
+# Query definitions
+type Query {
+  # Asset queries
+  asset(id: ID!): Asset
+  assets(filter: AssetFilter, pagination: PaginationInput): [Asset!]!
+  assetHierarchy(rootId: ID): [Asset!]!
+  
+  # Survey queries
+  survey(id: ID!): Survey
+  surveys(filter: SurveyFilter, pagination: PaginationInput): [Survey!]!
+  
+  # Reading queries
+  reading(id: ID!): Reading
+  readings(filter: ReadingFilter, pagination: PaginationInput): [Reading!]!
+  
+  # Exception queries
+  exception(id: ID!): Exception
+  exceptions(filter: ExceptionFilter, pagination: PaginationInput): [Exception!]!
+  
+  # Remediation queries
+  remediation(id: ID!): Remediation
+  remediations(filter: RemediationFilter, pagination: PaginationInput): [Remediation!]!
+}
+
+# Input types for mutations
+input CreateAssetInput {
+  name: String!
+  description: String
+  level: AssetLevel!
+  parentId: ID
+}
+
+input UpdateAssetInput {
+  id: ID!
+  name: String
+  description: String
+  parentId: ID
+}
+
+input CreateSurveyInput {
+  name: String!
+  description: String
+  assetId: ID!
+  interval: Int
+}
+
+input UpdateSurveyInput {
+  id: ID!
+  name: String
+  description: String
+  interval: Int
+}
+
+input CreateReadingInput {
+  assetId: ID!
+  surveyId: ID!
+  value: Float!
+  recordedAt: DateTime
+}
+
+input UpdateReadingInput {
+  assetId: ID!
+  surveyId: ID!
+  value: Float!
+  recordedAt: DateTime
+}
+
+input CreateExceptionInput {
+  assetId: ID!
+  surveyId: ID
+  reason: String
+  status: ExceptionStatus
+}
+
+input UpdateExceptionInput {
+  id: ID!
+  reason: String
+  status: ExceptionStatus
+}
+
+input CreateRemediationInput {
+  exceptionId: ID!
+  action: String!
+}
+
+input UpdateRemediationInput {
+  id: ID!
+  action: String
+  completedAt: DateTime
+}
+
+# Mutation definitions
+type Mutation {
+  # Asset mutations
+  createAsset(input: CreateAssetInput!): Asset!
+  updateAsset(input: UpdateAssetInput!): Asset!
+  deleteAsset(id: ID!): Boolean!
+  
+  # Survey mutations
+  createSurvey(input: CreateSurveyInput!): Survey!
+  updateSurvey(input: UpdateSurveyInput!): Survey!
+  deleteSurvey(id: ID!): Boolean!
+  
+  # Reading mutations
+  createReading(input: CreateReadingInput!): Reading!
+  updateReading(input: UpdateReadingInput!): Reading!
+  deleteReading(id: ID!): Boolean!
+  
+  # Exception mutations
+  createException(input: CreateExceptionInput!): Exception!
+  updateException(input: UpdateExceptionInput!): Exception!
+  deleteException(id: ID!): Boolean!
+  
+  # Remediation mutations
+  createRemediation(input: CreateRemediationInput!): Remediation!
+  updateRemediation(input: UpdateRemediationInput!): Remediation!
+  deleteRemediation(id: ID!): Boolean!
+}
+
+# Subscription definitions
+type Subscription {
+  # Asset subscriptions
+  assetCreated(filter: AssetFilter): Asset!
+  assetUpdated(id: ID): Asset!
+  assetDeleted(id: ID): ID!
+  
+  # Survey subscriptions
+  surveyCreated(filter: SurveyFilter): Survey!
+  surveyUpdated(id: ID): Survey!
+  surveyDeleted(id: ID): ID!
+  
+  # Reading subscriptions
+  readingCreated(filter: ReadingFilter): Reading!
+  readingUpdated(id: ID!): Reading!
+  readingDeleted(id: ID!): Reading!
+  
+  # Exception subscriptions
+  exceptionCreated(filter: ExceptionFilter): Exception!
+  exceptionUpdated(id: ID): Exception!
+  exceptionDeleted(id: ID): Exception!
+  
+  # Remediation subscriptions
+  remediationCreated(filter: RemediationFilter): Remediation!
+  remediationUpdated(id: ID): Remediation!
+  remediationDeleted(id: ID): Remediation!
+}
